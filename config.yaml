@@ -3,7 +3,6 @@
 data_dir: recordings                # folder holding the recordings (gitignored)
 output_dir: output                   # results land in {output_dir}/{recording name}/
 frames_dir: tmp/frames               # keep extracted frames in {frames_dir}/{recording name}/; leave blank to discard them
-schema: .instructions/stepthrough_schema.md
 
 # Settings for every recording. Any of them can be overridden inside a recording entry below.
 defaults:

@@ -25,10 +25,9 @@ def process_recording(settings, config, gemini_client, work_dir):
     labels = classify.classify_frames(local_client, candidate_frames, settings)
     pages = page_builder.build_pages(candidate_frames, labels, lines_per_frame, local_client, settings)
     model = settings["model"] or gemini.newest_flash_model(gemini_client)
-    schema_text = (ROOT / config["schema"]).read_text()
     records, usages = [], []
     for page in pages:
-        record, usage = describe.describe_page(gemini_client, model, page, settings, schema_text)
+        record, usage = describe.describe_page(gemini_client, model, page, settings)
         records.append(record)
         usages.append(usage)
     screenshot_count, failures = assemble.write_output(

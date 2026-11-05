@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from google import genai
 
 ROOT = Path(__file__).resolve().parent.parent
-PROMPT_PATH = Path(__file__).parent / "prompt.md"
+PROMPTS_DIR = ROOT / "prompts"
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
     entry = next(entry for entry in config["recordings"] if entry["file"] == sys.argv[1])
     settings = {**config["defaults"], **entry}
     recording = ROOT / config["data_dir"] / settings["file"]
-    prompt = PROMPT_PATH.read_text().format(
+    task = (PROMPTS_DIR / "gemini_video_task.md").read_text().format(
         stepthrough=settings["stepthrough"],
         device=settings["device"],
         client=settings["client"],
@@ -30,7 +30,7 @@ def main():
     while uploaded.state.name == "PROCESSING":
         time.sleep(settings["retry_backoff_seconds"])
         uploaded = client.files.get(name=uploaded.name)
-    response = client.models.generate_content(model=sys.argv[2], contents=[uploaded, (ROOT / config["schema"]).read_text(), prompt])
+    response = client.models.generate_content(model=sys.argv[2], contents=[uploaded, (PROMPTS_DIR / "gemini_setting_rules.md").read_text(), task])
     print(response.text)
     print(response.usage_metadata)
     client.files.delete(name=uploaded.name)

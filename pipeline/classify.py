@@ -6,7 +6,7 @@ from openai import OpenAI
 
 from frames import jpeg_bytes
 
-PROMPTS_DIR = Path(__file__).parent / "prompts"
+PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
 FRAME_LABELS = ("page", "auth", "junk")
 
 
@@ -28,12 +28,8 @@ def ask_local_model(client, settings, prompt, image_paths):
     return response.choices[0].message.content.strip().lower()
 
 
-def read_prompt(name):
-    return (PROMPTS_DIR / "study_context.md").read_text() + "\n" + (PROMPTS_DIR / name).read_text()
-
-
 def classify_frames(client, frames, settings):
-    prompt = read_prompt("classify_frame.md")
+    prompt = (PROMPTS_DIR / "local_frame_type.md").read_text()
     labels = []
     for frame in frames:
         answer = ask_local_model(client, settings, prompt, [frame.path])
@@ -43,7 +39,7 @@ def classify_frames(client, frames, settings):
 
 def pick_opener(client, parent_frame, parent_lines, child_frame, settings):
     numbered_rows = "\n".join(f"{number}. {line}" for number, line in enumerate(parent_lines, 1))
-    prompt = read_prompt("pick_opener.md").format(rows=numbered_rows)
+    prompt = (PROMPTS_DIR / "local_tapped_row.md").read_text().format(rows=numbered_rows)
     answer = ask_local_model(client, settings, prompt, [parent_frame.path, child_frame.path])
     number = re.search(r"\d+", answer)
     if number and 1 <= int(number.group()) <= len(parent_lines):
