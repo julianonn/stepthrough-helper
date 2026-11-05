@@ -1,0 +1,16 @@
+recording: .instructions/Google_app_settings.mp4
+stepthrough: ST1
+device: iPhone
+client: Google app (iPhone)
+account: Google
+start_index: 1
+model:
+frames_dir: tmp/frames
+scene_change_threshold: 0.1
+max_duplicate_hash_distance: 3
+max_frame_width: 1600
+classify_image_max_side: 640
+describe_image_max_side: 1600
+max_retry_attempts: 6
+retry_backoff_seconds: 5
+jpeg_quality: 80

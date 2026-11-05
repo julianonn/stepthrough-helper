@@ -1,1 +1,6 @@
 .instructions/
+.env
+output/
+__pycache__/
+tmp/
+.DS_Store
