@@ -1,6 +1,5 @@
 import json
 import os
-import re
 import time
 from pathlib import Path
 
@@ -10,21 +9,11 @@ from google.genai import errors, types
 from frames import jpeg_bytes
 
 RETRYABLE_STATUS_CODES = {429, 503}
-EXCLUDED_MODEL_WORDS = ("lite", "image", "tts", "audio", "live", "computer", "embedding", "customtools")
 
 
 def make_client():
     return genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
-
-def newest_flash_model(client):
-    candidates = []
-    for model in client.models.list():
-        match = re.search(r"gemini-(\d+(?:\.\d+)?)-flash", model.name)
-        accepts_content = "generateContent" in (model.supported_actions or [])
-        if match and accepts_content and not any(word in model.name for word in EXCLUDED_MODEL_WORDS):
-            candidates.append((float(match.group(1)), model.name))
-    return max(candidates)[1]
 
 
 def ask_json(client, model, parts, settings):

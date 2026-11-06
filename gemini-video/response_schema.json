@@ -1,0 +1,51 @@
+{
+  "type": "object",
+  "properties": {
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "page_id": {"type": "string"},
+          "parent_page_id": {"type": ["string", "null"]},
+          "stepthrough": {"type": "string"},
+          "device": {"type": "string"},
+          "client": {"type": "string"},
+          "account": {"type": "string"},
+          "path": {"type": "string"},
+          "settings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {"type": "string"},
+                "account": {"type": "string"},
+                "explanation": {"type": "string"},
+                "current_value": {"type": "string"},
+                "is_subpage": {"type": "boolean"},
+                "input_type": {"type": "string"},
+                "options": {"type": "array", "items": {"type": "string"}}
+              },
+              "required": ["name", "is_subpage"]
+            }
+          },
+          "auth_required": {"type": "string"},
+          "media": {
+            "type": "object",
+            "properties": {
+              "screenshots": {"type": "array", "items": {"type": "string"}},
+              "recording": {"type": "string"},
+              "timecode": {"type": "string"}
+            },
+            "required": ["screenshots", "recording", "timecode"]
+          },
+          "llm_notes": {"type": "string"},
+          "reviewer_notes": {"type": "string"}
+        },
+        "required": ["page_id", "parent_page_id", "stepthrough", "device", "client", "account", "path",
+                     "settings", "auth_required", "media", "llm_notes", "reviewer_notes"]
+      }
+    }
+  },
+  "required": ["pages"]
+}

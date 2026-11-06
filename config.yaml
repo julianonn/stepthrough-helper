@@ -1,32 +1,45 @@
 # Copy to config.yaml (gitignored) and edit. Relative paths resolve from this folder.
 
-data_dir: recordings                # folder holding the recordings (gitignored)
+data_dir: recordings                 # folder holding the recordings (gitignored)
 output_dir: output                   # results land in {output_dir}/{recording name}/
 frames_dir: tmp/frames               # keep extracted frames in {frames_dir}/{recording name}/; leave blank to discard them
 
 # Settings for every recording. Any of them can be overridden inside a recording entry below.
 defaults:
-  model:                             # Gemini model; blank = newest Flash
-  thinking_level: LOW                # MINIMAL | LOW | MEDIUM | HIGH
-  media_resolution: MEDIA_RESOLUTION_HIGH
-  local_model: Qwen/Qwen2.5-VL-7B-Instruct
-  local_model_url: http://localhost:8000/v1   # the SSH tunnel to the GPU box, see seclab-gpu-docker/README.md
+  # pipeline: frames (step 1)
   scene_change_threshold: 0.1        # 0–1; higher keeps fewer frames
   max_duplicate_hash_distance: 3     # 0–64; frames this close to the previous kept frame are dropped
   max_frame_width: 1600
+
+  # pipeline: OCR and page grouping (steps 2, 4)
   ocr_min_confidence: 0.8
   min_line_length: 3                 # OCR lines shorter than this (icons read as "B", "X") are ignored
   same_page_overlap: 0.5             # share of a frame's text already on the current page → same page
   revisit_overlap: 0.6               # share of a frame's text already on an earlier page → went back to it
   min_new_lines_for_screenshot: 2    # a same-page frame becomes an extra screenshot only if it shows this many new lines
+
+  # pipeline: local model on the GPU box (step 3), see seclab-gpu-docker/README.md
+  local_model: Qwen/Qwen2.5-VL-7B-Instruct
+  local_model_url: http://localhost:8000/v1
   classify_image_max_side: 768
+
+  # pipeline: Gemini page transcription (step 5)
+  gemini_model: gemini-3.6-flash     # required
+  thinking_level: LOW                # MINIMAL | LOW | MEDIUM | HIGH
+  media_resolution: MEDIA_RESOLUTION_HIGH
   describe_image_max_side: 1600
-  jpeg_quality: 80
   max_retry_attempts: 6
   retry_backoff_seconds: 5
 
+  # both local model and Gemini: images are sent as JPEG
+  jpeg_quality: 80
+
+  # gemini-video
+  gemini_video_model: gemini-3.6-flash   # required; must support agentic video
+  poll_seconds: 5                    # wait between status checks
+
 recordings:
-  - file: Google_app_settings.mp4
+  - file: Google_app_settings_short.mp4
     stepthrough: ST1
     device: iPhone                   # iPhone | Samsung | Mac | ThinkPad
     client: Google app (iPhone)

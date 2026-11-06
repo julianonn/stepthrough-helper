@@ -4,7 +4,7 @@ from collections import Counter
 from pathlib import Path
 
 import yaml
-from dotenv import load_dotenv
+from dotenv import find_dotenv, load_dotenv
 
 import assemble
 import classify
@@ -24,7 +24,7 @@ def process_recording(settings, config, gemini_client, work_dir):
     lines_per_frame = ocr.read_lines(candidate_frames, work_dir, settings)
     labels = classify.classify_frames(local_client, candidate_frames, settings)
     pages = page_builder.build_pages(candidate_frames, labels, lines_per_frame, local_client, settings)
-    model = settings["model"] or gemini.newest_flash_model(gemini_client)
+    model = settings["gemini_model"]
     records, usages = [], []
     for page in pages:
         record, usage = describe.describe_page(gemini_client, model, page, settings)
@@ -43,12 +43,14 @@ def process_recording(settings, config, gemini_client, work_dir):
 
 
 def main():
-    load_dotenv(ROOT / ".env")
+    load_dotenv(find_dotenv(usecwd=True))
     config = yaml.safe_load((ROOT / "config.yaml").read_text())
     selected_files = set(sys.argv[1:])
     gemini_client = gemini.make_client()
     for recording_entry in config["recordings"]:
         settings = {**config["defaults"], **recording_entry}
+        if not settings["gemini_model"]:
+            sys.exit("Set gemini_model in config.yaml.")
         if selected_files and settings["file"] not in selected_files:
             continue
         with tempfile.TemporaryDirectory() as temporary_dir:
