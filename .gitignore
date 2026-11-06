@@ -7,3 +7,4 @@ tmp/
 config.yaml
 recordings/*
 !recordings/.gitkeep
+config.yaml
