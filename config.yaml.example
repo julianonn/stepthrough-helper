@@ -1,4 +1,4 @@
-# Copy to config.yaml (gitignored) and edit. Relative paths resolve from this folder.
+# Copy to config.yaml and edit. Relative paths resolve from this folder.
 
 data_dir: recordings                 # folder holding the recordings (gitignored)
 output_dir: output                   # results land in {output_dir}/{recording name}/
@@ -39,7 +39,7 @@ defaults:
   poll_seconds: 5                    # wait between status checks
 
 recordings:
-  - file: Google_app_settings.mp4
+  - file: # path to your file
     stepthrough: ST1
     device: iPhone                   # iPhone | Samsung | Mac | ThinkPad
     client: Google app (iPhone)
